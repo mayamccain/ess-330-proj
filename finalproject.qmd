@@ -1,0 +1,60 @@
+---
+title: "ESS 330 Final Project Results"
+format: html
+---
+
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(skimr)
+library(ggplot2)
+
+swe_disch <- read_csv("~/github/ess-330-proj/swe_disch.csv")
+```
+
+
+```{r}
+ggplot(swe_disch, aes(x = Q, y = swe)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "SWE vs. River Discharge", x = "Snow Water Equivalent (SWE)", y = "River Discharge") +
+  theme_linedraw()
+
+```
+
+
+
+```{r}
+ggplot(swe_disch, aes(x = swe, y = Q)) +
+  geom_smooth() +
+  labs(title = "Distribution of SWE", x = "Snow Water Equivalent", y = "Discharge") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(swe_disch, aes(x = swe, y = Q)) +
+  geom_smooth(se = FALSE, method = "lm") +
+  labs(title = "SWE vs. Discharge", x = "Snow Water Equivalent", y = "Discharge") +
+  theme_minimal()
+```
+
+
+```{r}
+ggplot(swe_disch, aes(x = Q, y = swe)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "SWE vs. River Discharge", x = "Snow Water Equivalent (SWE)", y = "River Discharge") +
+  theme_linedraw()
+```
+
+
+
+
+
+
+
+
+
+
+
