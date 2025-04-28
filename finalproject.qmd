@@ -9,6 +9,15 @@ library(tidyverse)
 library(ggpubr)
 library(skimr)
 library(ggplot2)
+library(dataRetrieval)
+library(tidyverse)
+library(dplyr)
+library(tidymodels)
+library(zoo)
+library(lubridate)
+library(tsibble)
+library(feasts)
+library(plotly)
 
 swe_disch <- read_csv("~/github/ess-330-proj/swe_disch.csv")
 ```
@@ -48,11 +57,35 @@ ggplot(swe_disch, aes(x = Q, y = swe)) +
   theme_linedraw()
 ```
 
+# Time Series 
+```{r}
+disch_tbl <- as_tsibble(swe_disch)
+head(disch_tbl)
+```
+# Discharge Time Series
+```{r}
+disch_plot <- ggplot(swe_disch, aes(x = date, y = Q)) +
+  geom_line(color = "darkblue") +
+  labs(title = "Cache la Poudre River Streamflow",
+       x = "Date", y = "Discharge (cfs)") +
+  theme_minimal()
+ggplotly(disch_plot)
+```
 
+# SWE Time Series
+```{r}
+swe_plot <- ggplot(swe_disch, aes(x = date, y = swe)) +
+  geom_line(color = "darkblue") +
+  labs(title = "Snow Water Equivalent",
+       x = "Date", y = "Snow Water Equivalent") +
+  theme_minimal()
+ggplotly(swe_plot)
+```
 
-
-
-
+```{r}
+library(patchwork)
+disch_plot + swe_plot
+```
 
 
 
