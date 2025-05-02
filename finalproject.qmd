@@ -19,7 +19,7 @@ library(tsibble)
 library(feasts)
 library(plotly)
 
-swe_disch <- read_csv("~/github/ess-330-proj/swe_disch.csv")
+swe_disch <- read_csv("~/github/ess-330-proj/realfinal.csv")
 ```
 
 
@@ -41,21 +41,6 @@ ggplot(swe_disch, aes(x = swe, y = Q)) +
   theme_minimal()
 ```
 
-```{r}
-ggplot(swe_disch, aes(x = swe, y = Q)) +
-  geom_smooth(se = FALSE, method = "lm") +
-  labs(title = "SWE vs. Discharge", x = "Snow Water Equivalent", y = "Discharge") +
-  theme_minimal()
-```
-
-
-```{r}
-ggplot(swe_disch, aes(x = Q, y = swe)) +
-  geom_point() +
-  geom_smooth(method = "lm", col = "blue") +
-  labs(title = "SWE vs. River Discharge", x = "Snow Water Equivalent (SWE)", y = "River Discharge") +
-  theme_linedraw()
-```
 
 # Time Series 
 ```{r}
@@ -67,7 +52,7 @@ head(disch_tbl)
 disch_plot <- ggplot(swe_disch, aes(x = date, y = Q)) +
   geom_line(color = "darkblue") +
   labs(title = "Cache la Poudre River Streamflow",
-       x = "Date", y = "Discharge (cfs)") +
+       x = "Year", y = "Discharge (cfs)") +
   theme_minimal()
 ggplotly(disch_plot)
 ```
@@ -76,8 +61,8 @@ ggplotly(disch_plot)
 ```{r}
 swe_plot <- ggplot(swe_disch, aes(x = date, y = swe)) +
   geom_line(color = "darkblue") +
-  labs(title = "Snow Water Equivalent",
-       x = "Date", y = "Snow Water Equivalent") +
+  labs(title = "Joe Wright SNOTEL Station SWE",
+       x = "Year", y = "Snow Water Equivalent") +
   theme_minimal()
 ggplotly(swe_plot)
 ```
@@ -87,7 +72,45 @@ library(patchwork)
 disch_plot + swe_plot
 ```
 
+# Monthly Discharge
+```{r}
+monthly_flow <- swe_disch |> 
+  mutate(date = yearmonth(date)) |>
+  group_by(date) |>
+  summarise(mean_Q = mean(Q))
+```
 
+```{r}
+monthly_disch_tbl <- as_tsibble(monthly_flow) |>
+  fill_gaps()
+head(monthly_disch_tbl)
 
+monthly_disch <- gg_subseries(monthly_disch_tbl, y = mean_Q) +
+  labs(title = "Monthly Streamflow Patterns", y = "Flow", x = "Year") + 
+  theme_minimal()
+print(monthly_disch)
+```
 
+# Monthly SWE
+```{r}
+monthly_swe <- swe_disch |> 
+  mutate(date = yearmonth(date)) |>
+  group_by(date) |>
+  summarise(mean_swe = mean(swe))
+```
+
+```{r}
+monthly_swe_tbl <- as_tsibble(monthly_swe) |>
+  fill_gaps()
+head(monthly_swe_tbl)
+
+monthly_swe <- gg_subseries(monthly_swe_tbl, y = mean_swe) +
+  labs(title = "Monthly SWE Patterns", y = "Snow Water Equivalent", x = "Year") + 
+  theme_minimal()
+print(monthly_swe)
+```
+
+```{r}
+monthly_disch + monthly_swe
+```
 
